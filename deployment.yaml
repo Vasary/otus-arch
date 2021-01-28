@@ -1,0 +1,38 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: otus-arch-05-deployment
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app: app-simple
+  template:
+    metadata:
+      labels:
+        app: app-simple
+    spec:
+      containers:
+        - name: simple-app-container
+          image: vasary/outs-simple-echo-project:0.1.0
+          imagePullPolicy: Always
+          resources:
+            requests:
+              memory: "32Mi"
+              cpu: "50m"
+          ports:
+            - containerPort: 9000
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 9000
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 9000
